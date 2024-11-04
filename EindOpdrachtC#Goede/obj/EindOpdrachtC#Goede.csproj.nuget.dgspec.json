@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\kenki\\source\\repos\\EindOpdrachtC#Goede\\EindOpdrachtC#Goede\\EindOpdrachtC#Goede.csproj": {}
+    "C:\\Users\\yassi\\source\\repos\\dierentuingoede\\Dierentuin\\EindOpdrachtC#Goede\\EindOpdrachtC#Goede.csproj": {}
   },
   "projects": {
-    "C:\\Users\\kenki\\source\\repos\\EindOpdrachtC#Goede\\EindOpdrachtC#Goede\\EindOpdrachtC#Goede.csproj": {
+    "C:\\Users\\yassi\\source\\repos\\dierentuingoede\\Dierentuin\\EindOpdrachtC#Goede\\EindOpdrachtC#Goede.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\kenki\\source\\repos\\EindOpdrachtC#Goede\\EindOpdrachtC#Goede\\EindOpdrachtC#Goede.csproj",
+        "projectUniqueName": "C:\\Users\\yassi\\source\\repos\\dierentuingoede\\Dierentuin\\EindOpdrachtC#Goede\\EindOpdrachtC#Goede.csproj",
         "projectName": "EindOpdrachtC#Goede",
-        "projectPath": "C:\\Users\\kenki\\source\\repos\\EindOpdrachtC#Goede\\EindOpdrachtC#Goede\\EindOpdrachtC#Goede.csproj",
-        "packagesPath": "C:\\Users\\kenki\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\kenki\\source\\repos\\EindOpdrachtC#Goede\\EindOpdrachtC#Goede\\obj\\",
+        "projectPath": "C:\\Users\\yassi\\source\\repos\\dierentuingoede\\Dierentuin\\EindOpdrachtC#Goede\\EindOpdrachtC#Goede.csproj",
+        "packagesPath": "C:\\Users\\yassi\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\yassi\\source\\repos\\dierentuingoede\\Dierentuin\\EindOpdrachtC#Goede\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\kenki\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\yassi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

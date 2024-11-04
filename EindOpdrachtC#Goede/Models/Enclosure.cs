@@ -1,20 +1,29 @@
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
-namespace EindOpdrachtC_Goede.Models;
-
+using System.ComponentModel.DataAnnotations; // Zorg ervoor dat deze namespace is toegevoegd
+using Dierentuin.Models;
 using EindOpdrachtC_Goede.Models.Enums;
+
 public class Enclosure
 {
-    public int Id { get; set; }
+    public int Id { get; set; }                 // Unique identifier
 
     [Required]
-    public string Name { get; set; }
+    public string Name { get; set; }            // Name of the enclosure
 
-    public List<Animal> Animals { get; set; } = new List<Animal>();
+    public Climate Climate { get; set; }        // Climate of the enclosure (enum: Tropical, Temperate, etc.)
 
-    public double Size { get; set; }
-    public Climate Climate { get; set; }
-    public SecurityLevel SecurityLevel { get; set; }
-    public HabitatType HabitatType { get; set; }
+    public HabitatType HabitatType { get; set; } // Habitat type (flags enum: Forest, Aquatic, etc.)
+
+    public SecurityLevel SecurityLevel { get; set; } // Security level (Low, Medium, High)
+
+    public double Size { get; set; }            // Size in square meters
+
+    // Relationships
+    public List<Animal> Animals { get; set; }   // List of animals in the enclosure
+
+    // Constructor to initialize the Animals list
+    public Enclosure()
+    {
+        Animals = new List<Animal>();
+    }
 }
