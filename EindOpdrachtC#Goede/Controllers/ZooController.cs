@@ -1,121 +1,200 @@
 ﻿using EindOpdrachtC_Goede.Models.Enums;
-using EindOpdrachtC_Goede.Models;
-using System; // Don't forget to include System
-using System.Collections.Generic; // Required for List<T>
-using System.Linq; // Required for LINQ operations
+using Dierentuin.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Dierentuin.Controllers
 {
-    public class ZooController
+    public class ZooController : ControllerBase
     {
-        public class Zoo
+        private readonly ZooContext _dbContext; // Database context
+        private readonly Zoo _zoo; // Instance of the Zoo model
+
+        public ZooController(ZooContext dbContext, Zoo zoo)
         {
-            public List<Animal> Animals { get; set; }
-            public List<Enclosure> Enclosures { get; set; }
+            _dbContext = dbContext; // Initialize the _dbContext
+            _zoo = zoo; // Initialize the _zoo instance with the injected Zoo model
+        }
 
-            public Zoo()
+        public void Sunrise()
+        {
+            foreach (var animal in _zoo.Animals)
             {
-                Animals = new List<Animal>();
-                Enclosures = new List<Enclosure>();
-            }
-
-            // Methodes voor de verschillende acties
-            public void Sunrise()
-            {
-                foreach (var animal in Animals)
+                if (animal.ActivityPattern == ActivityPattern.Diurnal)
                 {
-                    if (animal.ActivityPattern == ActivityPattern.Diurnal)
+                    Console.WriteLine($"{animal.Name} is wakker geworden.");
+                }
+                else
+                {
+                    Console.WriteLine($"{animal.Name} slaapt nog.");
+                }
+            }
+        }
+
+        public void Sunset()
+        {
+            foreach (var animal in _zoo.Animals)
+            {
+                if (animal.ActivityPattern == ActivityPattern.Nocturnal)
+                {
+                    Console.WriteLine($"{animal.Name} is wakker geworden.");
+                }
+                else if (animal.ActivityPattern == ActivityPattern.Diurnal)
+                {
+                    Console.WriteLine($"{animal.Name} gaat slapen.");
+                }
+            }
+        }
+
+        public void FeedingTime()
+        {
+            Random rand = new Random();
+
+            foreach (var animal in _zoo.Animals)
+            {
+                if (animal.Diet == DietaryClass.Carnivore)
+                {
+                    var selectedPrey = _zoo.Animals
+                        .Where(a => a.Id != animal.Id && a.Size < animal.Size)
+                        .FirstOrDefault();
+
+                    if (selectedPrey != null)
                     {
-                        Console.WriteLine($"{animal.Name} is wakker geworden.");
+                        Console.WriteLine($"{animal.Name} is aan het eten {selectedPrey.Name}.");
                     }
                     else
                     {
-                        Console.WriteLine($"{animal.Name} slaapt nog.");
+                        Console.WriteLine($"{animal.Name} heeft geen prooi gevonden.");
                     }
                 }
-            }
-
-            public void Sunset()
-            {
-                foreach (var animal in Animals)
+                else if (animal.Diet == DietaryClass.Herbivore)
                 {
-                    if (animal.ActivityPattern == ActivityPattern.Nocturnal)
-                    {
-                        Console.WriteLine($"{animal.Name} is wakker geworden.");
-                    }
-                    else if (animal.ActivityPattern == ActivityPattern.Diurnal)
-                    {
-                        Console.WriteLine($"{animal.Name} gaat slapen.");
-                    }
+                    List<string> plantFoods = new List<string> { "Grass", "Leaves", "Fruits", "Vegetables" };
+                    int randomIndex = rand.Next(plantFoods.Count);
+                    string selectedHerb = plantFoods[randomIndex];
+
+                    Console.WriteLine($"{animal.Name} is eating {selectedHerb}.");
                 }
-            }
-
-            public void FeedingTime()
-            {
-                Random rand = new Random(); // Create a single instance of Random
-
-                foreach (var animal in Animals) // This 'animal' represents each animal in the zoo.
+                else if (animal.Diet == DietaryClass.Omnivore)
                 {
-                    if (animal.Diet == DietaryClass.Carnivore) // Check if the animal is a carnivore
+                    if (rand.Next(2) == 0)
                     {
-                        // Here we use 'a' as a temporary variable to represent each animal during filtering.
-                        var selectedPrey = Animals
-                            .Where(a => a.Id != animal.Id && a.Size < animal.Size) // 'a' is each animal in the Animals list
-                            .FirstOrDefault(); // Get the first animal that is not the current one and is smaller
+                        List<string> plantFoods = new List<string> { "Grass", "Leaves", "Fruits", "Vegetables" };
+                        int randomIndex = rand.Next(plantFoods.Count);
+                        string selectedPlantFood = plantFoods[randomIndex];
 
-                        if (selectedPrey != null) // If we found a prey
+                        Console.WriteLine($"{animal.Name} is eating {selectedPlantFood}.");
+                    }
+                    else
+                    {
+                        var selectedPrey = _zoo.Animals
+                            .Where(a => a.Id != animal.Id && a.Size < animal.Size)
+                            .FirstOrDefault();
+
+                        if (selectedPrey != null)
                         {
-                            Console.WriteLine($"{animal.Name} is aan het eten {selectedPrey.Name}.");
+                            Console.WriteLine($"{animal.Name} is eating {selectedPrey.Name}.");
                         }
-                        else // If no prey is found
+                        else
                         {
                             Console.WriteLine($"{animal.Name} heeft geen prooi gevonden.");
                         }
                     }
-                    else if (animal.Diet == DietaryClass.Herbivore)
-                    {
-                        List<string> plantFoods = new List<string> { "Grass", "Leaves", "Fruits", "Vegetables" }; // This is dynamic
-                        int randomIndex = rand.Next(plantFoods.Count); // Dynamically gets a random index
-                        string selectedHerb = plantFoods[randomIndex]; // Selects the food item based on the random index
+                }
+            }
+        }
 
-                        Console.WriteLine($"{animal.Name} is eating {selectedHerb}.");
+        public void CheckConstraints()
+        {
+            foreach (var enclosure in _zoo.Enclosures)
+            {
+                double totalRequiredSpace = enclosure.Animals.Sum(a => a.SpaceRequirement);
+                if (totalRequiredSpace > enclosure.Size)
+                {
+                    Console.WriteLine($"Warning: Enclosure {enclosure.Name} does not have enough space for its animals.");
+                }
+
+                foreach (var animal in enclosure.Animals)
+                {
+                    if (animal.SecurityRequirement > enclosure.SecurityLevel)
+                    {
+                        Console.WriteLine($"Warning: Enclosure {enclosure.Name} does not meet the security requirements for animal {animal.Name}.");
                     }
-                    else if (animal.Diet == DietaryClass.Omnivore)
+                }
+
+                foreach (var predator in enclosure.Animals)
+                {
+                    foreach (var prey in predator.Prey)
                     {
-                        // Randomly decide whether the omnivore eats plant or animal food
-                        if (rand.Next(2) == 0) // 50% chance for each type
+                        if (enclosure.Animals.Contains(prey))
                         {
-                            // Plant food
-                            List<string> plantFoods = new List<string> { "Grass", "Leaves", "Fruits", "Vegetables" };
-                            int randomIndex = rand.Next(plantFoods.Count);
-                            string selectedPlantFood = plantFoods[randomIndex];
-
-                            Console.WriteLine($"{animal.Name} is eating {selectedPlantFood}.");
+                            Console.WriteLine($"Warning: Predator {predator.Name} and prey {prey.Name} are housed together in {enclosure.Name}.");
                         }
-                        else
-                        {
-                            // Animal food
-                            var selectedPrey = Animals
-                                .Where(a => a.Id != animal.Id && a.Size < animal.Size)
-                                .FirstOrDefault();
+                    }
+                }
 
-                            if (selectedPrey != null)
-                            {
-                                Console.WriteLine($"{animal.Name} is eating {selectedPrey.Name}.");
-                            }
-                            else
-                            {
-                                Console.WriteLine($"{animal.Name} heeft geen prooi gevonden.");
-                            }
-                        }
+                var carnivores = enclosure.Animals.Where(a => a.Diet == DietaryClass.Carnivore).ToList();
+                foreach (var herbivore in enclosure.Animals.Where(a => a.Diet == DietaryClass.Herbivore))
+                {
+                    if (carnivores.Any())
+                    {
+                        Console.WriteLine($"Warning: Herbivore {herbivore.Name} and carnivores are housed together in {enclosure.Name}.");
                     }
                 }
             }
 
-            public void CheckConstraints()
+            Console.WriteLine("CheckConstraints completed.");
+        }
+
+        public void AutoAssign(bool completeExisting)
+        {
+            if (!completeExisting)
             {
-                // Logic to check constraints or requirements
+                ClearExistingEnclosures();
             }
+
+            var unassignedAnimals = _zoo.Animals.Where(a => a.EnclosureId == null).ToList();
+            foreach (var unassignedAnimal in unassignedAnimals)
+            {
+                bool assigned = false;
+                foreach (var enclosure in _zoo.Enclosures)
+                {
+                    double totalRequiredSpace = enclosure.Animals.Sum(a => a.SpaceRequirement);
+                    if (totalRequiredSpace + unassignedAnimal.SpaceRequirement <= enclosure.Size &&
+                        enclosure.SecurityLevel == unassignedAnimal.SecurityRequirement)
+                    {
+                        unassignedAnimal.EnclosureId = enclosure.Id;
+                        enclosure.Animals.Add(unassignedAnimal);
+                        assigned = true;
+                        break;
+                    }
+                }
+
+                if (!assigned)
+                {
+                    CreateNewEnclosureForAnimal(unassignedAnimal);
+                }
+            }
+
+            _dbContext.SaveChanges(); // Save changes to the database
+        }
+
+        private void ClearExistingEnclosures()
+        {
+            _zoo.Enclosures.Clear();
+        }
+
+        private void CreateNewEnclosureForAnimal(Animal animal)
+        {
+            var newEnclosure = new Enclosure
+            {
+                Size = animal.SpaceRequirement,
+                SecurityLevel = animal.SecurityRequirement,
+                Animals = new List<Animal> { animal }
+            };
+
+            _dbContext.Enclosures.Add(newEnclosure); // Add to DbContext
+            animal.EnclosureId = newEnclosure.Id; // Update animal's enclosure ID
         }
     }
 }

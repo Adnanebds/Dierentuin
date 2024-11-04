@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace EindOpdrachtC_Goede.Models
+namespace Dierentuin.Models
 {
     public class ZooContext : DbContext
     {
@@ -9,9 +9,18 @@ namespace EindOpdrachtC_Goede.Models
         public DbSet<Enclosure> Enclosures { get; set; }
         public DbSet<Zoo> Zoos { get; set; }
 
+        // Constructor accepting DbContextOptions
+        public ZooContext(DbContextOptions<ZooContext> options) : base(options)
+        {
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=Dierentuin5;Trusted_Connection=True;MultipleActiveResultSets=true");
+            // This can be left empty or used only when not configuring via dependency injection
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=Dierentuin5;Trusted_Connection=True;MultipleActiveResultSets=true");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -20,3 +29,4 @@ namespace EindOpdrachtC_Goede.Models
         }
     }
 }
+    

@@ -1,7 +1,22 @@
+using Dierentuin.Models; // Ensure your models namespace is included
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
+// Register the ZooContext with the dependency injection container
+builder.Services.AddDbContext<ZooContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("YourConnectionString"))); // Update with your actual connection string
+
+// Register the Zoo class as a singleton service
+builder.Services.AddSingleton<Zoo>(); // or AddScoped<Zoo>() based on your needs
 
 var app = builder.Build();
 
@@ -9,7 +24,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

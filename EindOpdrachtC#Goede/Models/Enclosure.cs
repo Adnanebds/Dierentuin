@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations; // Zorg ervoor dat deze namespace i
 using Dierentuin.Models;
 using EindOpdrachtC_Goede.Models.Enums;
 
+namespace Dierentuin.Models;
 public class Enclosure
 {
     public int Id { get; set; }                 // Unique identifier

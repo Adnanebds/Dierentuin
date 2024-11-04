@@ -5,7 +5,7 @@
 namespace EindOpdrachtC_Goede.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class cool : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -43,10 +43,10 @@ namespace EindOpdrachtC_Goede.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Size = table.Column<double>(type: "float", nullable: false),
                     Climate = table.Column<int>(type: "int", nullable: false),
-                    SecurityLevel = table.Column<int>(type: "int", nullable: false),
                     HabitatType = table.Column<int>(type: "int", nullable: false),
+                    SecurityLevel = table.Column<int>(type: "int", nullable: false),
+                    Size = table.Column<double>(type: "float", nullable: false),
                     ZooId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -65,18 +65,26 @@ namespace EindOpdrachtC_Goede.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Species = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SpaceRequirement = table.Column<double>(type: "float", nullable: false),
-                    SecurityRequirement = table.Column<int>(type: "int", nullable: false),
-                    DietaryClass = table.Column<int>(type: "int", nullable: false),
+                    Species = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Size = table.Column<int>(type: "int", nullable: false),
+                    Diet = table.Column<int>(type: "int", nullable: false),
                     ActivityPattern = table.Column<int>(type: "int", nullable: false),
-                    EnclosureId = table.Column<int>(type: "int", nullable: true)
+                    SecurityRequirement = table.Column<int>(type: "int", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: true),
+                    EnclosureId = table.Column<int>(type: "int", nullable: true),
+                    AnimalId = table.Column<int>(type: "int", nullable: true),
+                    ZooId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Animals", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Animals_Animals_AnimalId",
+                        column: x => x.AnimalId,
+                        principalTable: "Animals",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Animals_Categories_CategoryId",
                         column: x => x.CategoryId,
@@ -87,7 +95,17 @@ namespace EindOpdrachtC_Goede.Migrations
                         column: x => x.EnclosureId,
                         principalTable: "Enclosures",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Animals_Zoos_ZooId",
+                        column: x => x.ZooId,
+                        principalTable: "Zoos",
+                        principalColumn: "Id");
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Animals_AnimalId",
+                table: "Animals",
+                column: "AnimalId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Animals_CategoryId",
@@ -98,6 +116,11 @@ namespace EindOpdrachtC_Goede.Migrations
                 name: "IX_Animals_EnclosureId",
                 table: "Animals",
                 column: "EnclosureId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Animals_ZooId",
+                table: "Animals",
+                column: "ZooId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Enclosures_ZooId",
